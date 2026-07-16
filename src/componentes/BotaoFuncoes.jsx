@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { cores, fontes, tamanhos } from "../tema";
 
-export default function BotaoFuncoes({ texto, renderizarIcone, outline, corPrincipal, corSegundaria }) {
+export default function BotaoFuncoes({ texto, renderizarIcone, outline, corPrincipal, corSegundaria, onPress }) {
     return (
         <TouchableOpacity
             style={[
@@ -15,6 +15,7 @@ export default function BotaoFuncoes({ texto, renderizarIcone, outline, corPrinc
                 }
             ]}
             activeOpacity={0.9}
+            onPress={onPress}
         >
 
             {renderizarIcone && renderizarIcone(!outline ? corSegundaria : corPrincipal)}
