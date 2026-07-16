@@ -1,10 +1,45 @@
-import { View, Text, StyleSheet, Button, Image } from "react-native";
+import { View, Text, StyleSheet, Button, Image, Alert } from "react-native";
 import { mainStyles } from '../../styles/main'
 import { cores, fontes, tamanhos } from "../../tema";
 import BotaoFuncoes from '../../componentes/BotaoFuncoes'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useEffect, useState } from "react";
+import * as LocalAuthentication from 'expo-local-authentication'
 
 export default function PaginaAuth ({ navigation }) {
+    const [compativel, setCompativel] = useState(false)
+    
+    useEffect(() => {
+        verificarSuporteBiometrico()
+    }, [])
+
+    const verificarSuporteBiometrico = async () => {
+        const possuiHardware = await LocalAuthentication.hasHardwareAsync()
+        const possuiBiometriaCadastrada = await LocalAuthentication.isEnrolledAsync()
+
+        setCompativel(possuiHardware && possuiBiometriaCadastrada)
+    }
+
+    const handleAutenticao = async () => {
+        if(!compativel) {
+            Alert.alert(
+                "Não compatível",
+                "Seu dispositivo não possui biometria cadastrada ou não suporta essa tecnologia."
+            )
+            return
+        }
+
+        const resultado = await LocalAuthentication.authenticateAsync({
+            promptMessage: 'Desbloqueie para usar o app.',
+            fallbackLabel: 'Usar senha padrão',
+            disableDeviceFallback: false
+        })
+
+        if(resultado.success) {
+            navigation.replace('main')
+        }
+    }
+
     return (
         <View style={[mainStyles.container, styles.body]}>
             <View style={styles.container_logo}>
@@ -21,7 +56,7 @@ export default function PaginaAuth ({ navigation }) {
                 corPrincipal={cores.primaria}
                 corSegundaria={cores.branco}
                 renderizarIcone={(cor) => <Ionicons name="enter" size={tamanhos.lg} color={cor} />}
-                onPress={() => navigation.replace('main')}
+                onPress={handleAutenticao}
             />
         </View>
     )
