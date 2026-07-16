@@ -3,5 +3,9 @@ export const cores = {
     secundaria: "#1B47A9",
     branco: "#F8FAFC",
     preto: "#181818",
-    cinza: "#cccccc"
+    cinza: "#cccccc",
+    cinza_200: "#e9e9e9",
+    cinza_700: "#606060ff",
+    verde_receita: "#009407",
+    vermelho_despesa: "#B70000"
 }
