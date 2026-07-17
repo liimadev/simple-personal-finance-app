@@ -1,14 +1,21 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Modal } from "react-native";
 import { cores, fontes, tamanhos } from '../../tema'
 import { mainStyles } from "../../styles/main";
 import BotaoFuncoes from "../../componentes/BotaoFuncoes";
 import Feather from '@expo/vector-icons/Feather';
 import BlocoInfo from "../../componentes/ BlocoInfo";
 import { Bar } from "react-native-progress";
+import ModalFinancas from "../../componentes/ModalFinancas";
+import { useRef, useState } from "react";
 
 export default function PaginaFinancas ({ navigation }) {
+    const [modalFinancasAtivo, setModalFinancasAtivo] = useState(false)
+
     return (
         <ScrollView style={[mainStyles.container, style.container]}>
+
+            <ModalFinancas ativo={modalFinancasAtivo} fechar={() => setModalFinancasAtivo(false)}/>
+
             <Text style={style.titulo}>Suas Finanças</Text>
             <Text style={style.descricao}>Aqui, você gerencia suas finanças e categorias.</Text>
 
@@ -19,6 +26,7 @@ export default function PaginaFinancas ({ navigation }) {
                     outline={false}
                     corPrincipal={cores.primaria}
                     corSegundaria={cores.branco}
+                    onPress={() => setModalFinancasAtivo(true)}
                 />
 
                 <BotaoFuncoes
