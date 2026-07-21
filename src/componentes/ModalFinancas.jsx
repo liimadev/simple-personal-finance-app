@@ -1,9 +1,11 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
-import { cores, fontes, tamanhos } from "../tema"
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { Text, TextInput, View } from "react-native"
 import MainModal from "./MainModal";
 import { Dropdown } from "react-native-element-dropdown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { mainStyles } from "../styles/main";
+import { cores, tamanhos } from "../tema";
+import BotaoFuncoes from './BotaoFuncoes'
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const tipoFinanca = [
     { label: 'Receita', value: '1' },
@@ -14,7 +16,7 @@ const categorias = [
     { label: '-', value: '1' }
 ]
 
-export default function ModalFinancas ({ ativo, fechar }) {
+export default function ModalFinancas ({ ativo, fechar, tipoFinancaInicial='1' }) {
     const [tipo, setTipo] = useState(null)
     const [titulo, setTitulo] = useState('')
 
@@ -51,28 +53,27 @@ export default function ModalFinancas ({ ativo, fechar }) {
         setDataExibida(dataFormatada);
     }
 
-    const [campoFocado, setCampoFocado] = useState(false)
+    useEffect(() => {
+        if (ativo) {
+            setTipo(String(tipoFinancaInicial));
+        }
+    }, [ativo, tipoFinancaInicial]);
 
     return (
         <MainModal
             ativo={ativo}
             fechar={fechar}
+            titulo="Nova Finança"
         >
-            <View style={styles.cabecalho}>
-                <Text style={styles.cabecalho_titulo}>Nova Finança</Text>
-                <TouchableOpacity onPress={fechar} activeOpacity={0.9}>
-                    <Ionicons name="close" size={tamanhos.lg * 1.2} color={cores.preto} />
-                </TouchableOpacity>
-            </View>
 
             <View>
-                <View style={styles.container_input}>
-                    <Text style={styles.label}>Tipo de Finança</Text>
+                <View style={mainStyles.container_input}>
+                    <Text style={mainStyles.label}>Tipo de Finança</Text>
                     <Dropdown 
-                        style={[styles.input, campoFocado && styles.input_focado]}
-                        placeholderStyle={styles.input_placeholder}
-                        selectedTextStyle={styles.input_placeholder}
-                        itemTextStyle={styles.input_placeholder}
+                        style={[mainStyles.input]}
+                        placeholderStyle={mainStyles.input_placeholder}
+                        selectedTextStyle={[mainStyles.input_placeholder, mainStyles.item_dropdown]}
+                        itemTextStyle={[mainStyles.input_placeholder, mainStyles.item_dropdown]}
                         data={tipoFinanca}
                         labelField="label"
                         valueField="value"
@@ -82,10 +83,11 @@ export default function ModalFinancas ({ ativo, fechar }) {
                     />
                 </View>
 
-                <View style={styles.container_input}>
-                    <Text style={styles.label}>Titulo</Text>
+                <View style={mainStyles.container_input}>
+                    <Text style={mainStyles.label}>Titulo</Text>
                     <TextInput 
-                        style={styles.input}
+                        style={mainStyles.input}
+                        placeholderTextColor={cores.cinza_texto}
                         value={titulo}
                         onChangeText={text => setTitulo(text)}
                         placeholder="Digite algo"
@@ -93,10 +95,11 @@ export default function ModalFinancas ({ ativo, fechar }) {
                     />
                 </View>
 
-                <View style={styles.container_input}>
-                    <Text style={styles.label}>Valor (R$)</Text>
+                <View style={mainStyles.container_input}>
+                    <Text style={mainStyles.label}>Valor (R$)</Text>
                     <TextInput 
-                        style={styles.input}
+                        style={mainStyles.input}
+                        placeholderTextColor={cores.cinza_texto}
                         keyboardType="numeric"
                         value={valorExibido}
                         onChangeText={salvarValor}
@@ -105,13 +108,13 @@ export default function ModalFinancas ({ ativo, fechar }) {
                     />
                 </View>
 
-                <View style={styles.container_input}>
-                    <Text style={styles.label}>Categoria</Text>
+                <View style={mainStyles.container_input}>
+                    <Text style={mainStyles.label}>Categoria</Text>
                     <Dropdown 
-                        style={styles.input}
-                        placeholderStyle={styles.input_placeholder}
-                        selectedTextStyle={styles.input_placeholder}
-                        itemTextStyle={styles.input_placeholder}
+                        style={mainStyles.input}
+                        placeholderStyle={mainStyles.input_placeholder}
+                        selectedTextStyle={[mainStyles.input_placeholder, mainStyles.item_dropdown]}
+                        itemTextStyle={[mainStyles.input_placeholder, mainStyles.item_dropdown]}
                         data={categorias}
                         labelField="label"
                         valueField="value"
@@ -121,10 +124,11 @@ export default function ModalFinancas ({ ativo, fechar }) {
                     />
                 </View>
 
-                <View style={styles.container_input}>
-                    <Text style={styles.label}>Data de lançamento</Text>
+                <View style={mainStyles.container_input}>
+                    <Text style={mainStyles.label}>Data de lançamento</Text>
                     <TextInput 
-                        style={styles.input}
+                        style={mainStyles.input}
+                        placeholderTextColor={cores.cinza_texto}
                         keyboardType="numeric"
                         value={DataExibida}
                         onChangeText={salvarData}
@@ -134,51 +138,15 @@ export default function ModalFinancas ({ ativo, fechar }) {
                     />
                 </View>
 
-
+                <View style={mainStyles.container_input}>
+                    <BotaoFuncoes 
+                        texto={"Salvar"} 
+                        corPrincipal={cores.primaria} 
+                        corSegundaria={cores.branco}
+                        renderizarIcone={(cor) => <FontAwesome name="check-circle-o" size={tamanhos.lg} color={cor} />}
+                    />
+                </View>
             </View>
         </MainModal>
     )
 }
-
-const styles = StyleSheet.create({
-    cabecalho: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    cabecalho_titulo: {
-        fontFamily: fontes.bold,
-        fontSize: tamanhos.md * 1.3,
-        lineHeight: (tamanhos.md * 1.3) + 10,
-        color: cores.preto
-    },
-    container_input: {
-        marginTop: 15
-    },
-    input: {
-        backgroundColor: cores.branco,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        borderWidth: 1,
-        borderColor: cores.cinza,
-        borderRadius: 5,
-        fontFamily: fontes.medium,
-        fontSize: tamanhos.sm,
-        lineHeight: tamanhos.sm + 10
-    },
-    input_focado: {
-        borderColor: cores.primaria
-    },
-    input_placeholder: {
-        fontFamily: fontes.medium,
-        fontSize: tamanhos.md,
-        lineHeight: tamanhos.md * 1.5
-    },
-    label: {
-        fontFamily: fontes.semibold,
-        fontSize: tamanhos.md,
-        lineHeight: tamanhos.md * 1.5,
-        marginBottom: 5
-    }
-})

@@ -8,12 +8,26 @@ import BotaoFuncoes from "../../componentes/BotaoFuncoes";
 import BlocoInfo from "../../componentes/ BlocoInfo";
 import { Bar } from "react-native-progress";
 import ElementoExtrato from "../../componentes/ElementoExtrato";
+import ModalFinancas from "../../componentes/ModalFinancas";
 
 export default function PaginaHome ({ navigation }) {
     const [valoresOcultos, setValoresOcultos] = useState(false)
+    const [modalFinancasAtivo, setModalFinancasAtivo] = useState(false)
+    const [financaIsReceita, setFinancaIsReceita] = useState(true)
+
+    const abrirModalFinancas = (isReceita) => {
+        setFinancaIsReceita(isReceita)
+        setModalFinancasAtivo(true)
+    }
 
     return (
         <ScrollView style={mainStyles.container}>
+            <ModalFinancas
+                ativo={modalFinancasAtivo} 
+                fechar={() => setModalFinancasAtivo(false)}
+                tipoFinancaInicial={financaIsReceita ? "1" : "2"}
+            />
+
             <View style={styles.cabecalho}>
                 <View style={styles.saud_cabecalho}>
                     <Text style={styles.saudacao_cabecalho}>Olá, Usuário!</Text>
@@ -27,7 +41,7 @@ export default function PaginaHome ({ navigation }) {
 
                 <View style={{ marginTop: 25, }}>
                     <Text style={styles.texto_comum}>Saldo total disponível</Text>
-                    <Text style={styles.saldo}>{ valoresOcultos ? "R$ *,**" : "R$ 10.000,00"}</Text>
+                    <Text style={styles.saldo}>{ valoresOcultos ? "R$ -,--" : "R$ 10.000,00"}</Text>
                 </View>
 
                 <View style={[styles.saud_cabecalho, { justifyContent: 'flex-start', gap: 10, marginTop: 10 }]}>
@@ -37,6 +51,7 @@ export default function PaginaHome ({ navigation }) {
                         outline={false}
                         corPrincipal={cores.branco}
                         corSegundaria={cores.primaria}
+                        onPress={() => abrirModalFinancas(true)}
                     />
 
                     <BotaoFuncoes
@@ -45,6 +60,7 @@ export default function PaginaHome ({ navigation }) {
                         outline={true}
                         corPrincipal={cores.branco}
                         corSegundaria={cores.primaria}
+                        onPress={() => abrirModalFinancas(false)}
                     />
                 </View>
             </View>
@@ -68,13 +84,13 @@ export default function PaginaHome ({ navigation }) {
 
                 <BlocoInfo titulo={"Receitas em Julho"} mTop={12}>
                     <Text style={[styles.receita_despesa, { color: cores.verde_receita}]}>
-                        + R$ {valoresOcultos ? "*,**" : "12.000,00"}
+                        + R$ {valoresOcultos ? "-,--" : "12.000,00"}
                     </Text>
                 </BlocoInfo>
 
                 <BlocoInfo titulo={"Despesas em Julho"} mTop={12}>
                     <Text style={[styles.receita_despesa, { color: cores.vermelho_despesa}]}>
-                        - R$ {valoresOcultos ? "*,**" : "2.000,00"}
+                        - R$ {valoresOcultos ? "-,--" : "2.000,00"}
                     </Text>
                 </BlocoInfo>
 

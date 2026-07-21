@@ -39,11 +39,12 @@ const style = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: 8
     },
     texto: {
         fontFamily: fontes.medium,
-        fontSize: tamanhos.sm,
-        lineHeight: tamanhos.sm + 5
+        fontSize: tamanhos.md,
+        lineHeight: tamanhos.md + 5
     }
 })

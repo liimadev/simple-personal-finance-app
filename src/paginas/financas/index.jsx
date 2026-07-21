@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, Modal } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { cores, fontes, tamanhos } from '../../tema'
 import { mainStyles } from "../../styles/main";
 import BotaoFuncoes from "../../componentes/BotaoFuncoes";
@@ -7,16 +7,29 @@ import BlocoInfo from "../../componentes/ BlocoInfo";
 import { Bar } from "react-native-progress";
 import ModalFinancas from "../../componentes/ModalFinancas";
 import { useRef, useState } from "react";
+import ModalCategorias from "../../componentes/ModalCategorias";
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function PaginaFinancas ({ navigation }) {
     const [modalFinancasAtivo, setModalFinancasAtivo] = useState(false)
+    const [modalCategoriasAtivo, setModalCategoriasAtivo] = useState(false)
+    const [valoresOcultos, setValoresOcultos] = useState(false)
 
     return (
         <ScrollView style={[mainStyles.container, style.container]}>
 
             <ModalFinancas ativo={modalFinancasAtivo} fechar={() => setModalFinancasAtivo(false)}/>
+            <ModalCategorias ativo={modalCategoriasAtivo} fechar={() => setModalCategoriasAtivo(false)} />
 
-            <Text style={style.titulo}>Suas Finanças</Text>
+            <View style={{display: 'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+                <Text style={style.titulo}>Suas Finanças</Text>
+                <TouchableOpacity
+                    onPress={() => setValoresOcultos(valorAnterior => !valorAnterior)}
+                    activeOpacity={1}
+                >
+                    <Ionicons name={valoresOcultos ? 'eye' : 'eye-off' } size={tamanhos.lg} color={cores.preto} />
+                </TouchableOpacity>
+            </View>
             <Text style={style.descricao}>Aqui, você gerencia suas finanças e categorias.</Text>
 
             <View style={style.container_botoes}>
@@ -35,11 +48,12 @@ export default function PaginaFinancas ({ navigation }) {
                     outline={true}
                     corPrincipal={cores.primaria}
                     corSegundaria={cores.branco}
+                    onPress={() => setModalCategoriasAtivo(true)}
                 />
             </View>
 
             <BlocoInfo titulo={"Visão Geral"} footer={"Suas finanças estão ótimas!"} mTop={20}>
-                <Text style={style.texto_visao}>R$ 2.000/R$ 10.000,00</Text>
+                <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 2.000/R$ 10.000,00"}</Text>
 
                 <View style={style.container_progresso}>
                     <View style={{ flex: 1 }}>
@@ -58,7 +72,7 @@ export default function PaginaFinancas ({ navigation }) {
 
             <Text style={[style.titulo, { fontSize: tamanhos.lg, marginBlock: 10}]}>Principais Gastos</Text>
             <BlocoInfo titulo={"Alimentação"} footer={"Seus gastos estão sob controle!"}>
-                <Text style={style.texto_visao}>R$ 1.000,00/R$ 1.500,00</Text>
+                <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 1.000,00/R$ 1.500,00"}</Text>
 
                 <View style={style.container_progresso}>
                     <View style={{ flex: 1 }}>
@@ -75,7 +89,7 @@ export default function PaginaFinancas ({ navigation }) {
                 </View>
             </BlocoInfo>
             <BlocoInfo titulo={"Veículo"} footer={"Seus gastos passaram do planejado!"} mTop={10}>
-                <Text style={style.texto_visao}>R$ 3.400,00/R$ 3.000,00</Text>
+                <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 3.400,00/R$ 3.000,00"}</Text>
 
                 <View style={style.container_progresso}>
                     <View style={{ flex: 1 }}>
@@ -93,7 +107,7 @@ export default function PaginaFinancas ({ navigation }) {
             </BlocoInfo>
             <View style={{ marginBottom: 80}}>
                 <BlocoInfo titulo={"Moradia"} footer={"Seus gastos estão em alerta!"} mTop={10}>
-                    <Text style={style.texto_visao}>R$ 2.500,00/R$ 3.000,00</Text>
+                    <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 2.500,00/R$ 3.000,00"}</Text>
 
                     <View style={style.container_progresso}>
                         <View style={{ flex: 1 }}>

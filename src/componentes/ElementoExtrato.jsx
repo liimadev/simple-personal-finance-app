@@ -9,7 +9,7 @@ export default function ElementoExtrato ({ titulo, data, valor, isEntrada=true, 
                 <Text style={style.data}>{data}</Text>
             </View>
             <Text style={[style.valor, {color: isEntrada ? cores.verde_receita : cores.vermelho_despesa}]}>
-                {isEntrada ? "+" : "-"} {!exibir ? valor : "*,**"}
+                {isEntrada ? "+" : "-"} {!exibir ? valor : "-,--"}
             </Text>
         </View>
     )
