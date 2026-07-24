@@ -40,14 +40,14 @@ export default function ModalFinancas ({ ativo, fechar, tipoFinancaInicial='1' }
 
     const salvarData = (texto) => {
         const apenasNumeros = texto.replace(/\D/g, '');
-        const numerosLimitados = apenasNumeros.slice(0, 8);
+        const numerosLimitados = apenasNumeros.slice(0, 6);
 
         let dataFormatada = numerosLimitados;
         
         if (numerosLimitados.length > 2 && numerosLimitados.length <= 4) {
             dataFormatada = numerosLimitados.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
         } else if (numerosLimitados.length > 4) {
-            dataFormatada = numerosLimitados.replace(/^(\d{2})(\d{2})(\d{0,4})/, '$1/$2/$3');
+            dataFormatada = numerosLimitados.replace(/^(\d{2})(\d{0,4})/, '$1/$2');
         }
 
         setDataExibida(dataFormatada);
@@ -125,14 +125,14 @@ export default function ModalFinancas ({ ativo, fechar, tipoFinancaInicial='1' }
                 </View>
 
                 <View style={mainStyles.container_input}>
-                    <Text style={mainStyles.label}>Data de lançamento</Text>
+                    <Text style={mainStyles.label}>Mês de lançamento</Text>
                     <TextInput 
                         style={mainStyles.input}
                         placeholderTextColor={cores.cinza_texto}
                         keyboardType="numeric"
                         value={DataExibida}
                         onChangeText={salvarData}
-                        placeholder="DD/MM/AAAA"
+                        placeholder="MM/AAAA"
                         autoCorrect={true}
                         focusable={true}
                     />

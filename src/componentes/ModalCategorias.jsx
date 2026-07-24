@@ -1,15 +1,24 @@
 import { useState } from "react";
-import { Text, TextInput, View, StyleSheet } from "react-native";
+import { Text, TextInput, View, StyleSheet, Alert } from "react-native";
 import MainModal from "./MainModal";
 import { mainStyles } from "../styles/main";
 import ColorPicker, { Panel1, HueSlider } from 'reanimated-color-picker';
 import { cores, tamanhos } from "../tema";
 import BotaoFuncoes from "./BotaoFuncoes";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Dropdown } from "react-native-element-dropdown";
+import { database } from "../database";
+import { Q } from "@nozbe/watermelondb";
+
+const tipoCategoria = [
+    { label: 'Receitas', value: '1' },
+    { label: 'Despesas', value: '2' }
+]
 
 export default function ModalCategorias ({ ativo, fechar }) {
     const [titulo, setTitulo] = useState('');
     const [valor, setValor] = useState(0);
+    const [tipo, setTipo] = useState(null)
     const [valorExibido, setValorExibido] = useState('');
     
     const [cor, setCor] = useState('#70c1b3');
@@ -31,12 +40,50 @@ export default function ModalCategorias ({ ativo, fechar }) {
         setCor(hex);
     };
 
+    //------------------| SALVAR CATEGORIA |------------------//
+    const salvarCategoria = async () => {
+        if((titulo.trim().length == 0) || tipo < 1 || valor < 0.1)
+            return Alert.alert('Erro', 'Preencha os campos corretamente.')
+
+        try {
+            const cor_ = cor.replace('#', '')
+            const tituloNormalizado = titulo.trim().toLowerCase()
+
+            const categoriaExiste = (await database.get('Categoria').query(Q.where("titulo", tituloNormalizado)).fetch()).length > 0
+            if(categoriaExiste)
+                return Alert.alert('Categoria já registrada', 'A categoria que você tentou salvar já existe.')
+
+            await database.write(async () => {
+                await database.get('Categoria').create(categoria => {
+                    categoria.titulo = tituloNormalizado,
+                    categoria.tipo = tipo,
+                    categoria.metaMensal = valor
+                    categoria.corDestaque = cor_
+                })
+            })
+
+            Alert.alert(
+                'Categoria registrada',
+                'A categoria foi salva com sucesso!'
+            )
+
+            fechar()
+            setTitulo('')
+            setValor(0)
+            setValorExibido('')
+            setTipo(null)
+        } catch (error) {
+            Alert.alert('Erro', 'Ocorreu um erro inesperado. Tente novamente.')
+            console.log(error)
+        }
+    }
+
     return (
         <MainModal
             ativo={ativo}
             fechar={fechar}
             titulo="Nova Categoria"
-            porcentagem={0.7}
+            porcentagem={0.8}
         >
             <View>
                 <View style={mainStyles.container_input}>
@@ -50,6 +97,22 @@ export default function ModalCategorias ({ ativo, fechar }) {
                         autoCorrect={true}
                     />
                 </View>
+            </View>
+
+            <View style={mainStyles.container_input}>
+                <Text style={mainStyles.label}>Tipo de Finança</Text>
+                <Dropdown
+                    style={[mainStyles.input]}
+                    placeholderStyle={mainStyles.input_placeholder}
+                    selectedTextStyle={[mainStyles.input_placeholder, mainStyles.item_dropdown]}
+                    itemTextStyle={[mainStyles.input_placeholder, mainStyles.item_dropdown]}
+                    data={tipoCategoria}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Selecione um tipo para a categoria"
+                    value={tipo}
+                    onChange={item => setTipo(item.value)}
+                />
             </View>
 
             <View style={mainStyles.container_input}>
@@ -89,6 +152,7 @@ export default function ModalCategorias ({ ativo, fechar }) {
                     corPrincipal={cores.primaria} 
                     corSegundaria={cores.branco}
                     renderizarIcone={(cor) => <FontAwesome name="check-circle-o" size={tamanhos.lg} color={cor} />}
+                    onPress={salvarCategoria}
                 />
             </View>
         </MainModal>

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from "react-native";
 import { cores, fontes, tamanhos } from '../../tema'
 import { mainStyles } from "../../styles/main";
 import BotaoFuncoes from "../../componentes/BotaoFuncoes";
@@ -9,11 +9,13 @@ import ModalFinancas from "../../componentes/ModalFinancas";
 import { useRef, useState } from "react";
 import ModalCategorias from "../../componentes/ModalCategorias";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useValoresOcultosStore } from "../../servicos/valoresOcultosStore";
 
 export default function PaginaFinancas ({ navigation }) {
     const [modalFinancasAtivo, setModalFinancasAtivo] = useState(false)
     const [modalCategoriasAtivo, setModalCategoriasAtivo] = useState(false)
-    const [valoresOcultos, setValoresOcultos] = useState(false)
+    
+    const { valoresOcultos, toggleValoresOcultos } = useValoresOcultosStore()
 
     return (
         <ScrollView style={[mainStyles.container, style.container]}>
@@ -24,7 +26,7 @@ export default function PaginaFinancas ({ navigation }) {
             <View style={{display: 'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
                 <Text style={style.titulo}>Suas Finanças</Text>
                 <TouchableOpacity
-                    onPress={() => setValoresOcultos(valorAnterior => !valorAnterior)}
+                    onPress={toggleValoresOcultos}
                     activeOpacity={1}
                 >
                     <Ionicons name={valoresOcultos ? 'eye' : 'eye-off' } size={tamanhos.lg} color={cores.preto} />
@@ -52,77 +54,90 @@ export default function PaginaFinancas ({ navigation }) {
                 />
             </View>
 
-            <BlocoInfo titulo={"Visão Geral"} footer={"Suas finanças estão ótimas!"} mTop={20}>
-                <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 2.000/R$ 10.000,00"}</Text>
-
-                <View style={style.container_progresso}>
-                    <View style={{ flex: 1 }}>
-                        <Bar
-                            progress={0.2}
-                            color={cores.primaria}
-                            unfilledColor={cores.cinza_200}
-                            height={10}
-                            width={null}
-                            borderWidth={0}
-                        />
-                    </View>
-                    <Text>20%</Text>
+            <View>
+                <View style={style.container_mes}>
+                    <TouchableOpacity style={style.container_mes.seta_lateral} activeOpacity={0.9}>
+                        <Feather name="chevron-left" size={tamanhos.lg * 1.2} color={cores.cinza_700} />
+                    </TouchableOpacity>
+                    <Text style={style.container_mes.texto}>Jul/2026</Text>
+                    <TouchableOpacity style={style.container_mes.seta_lateral} activeOpacity={0.9}>
+                        <Feather name="chevron-right" size={tamanhos.lg * 1.2} color={cores.cinza_700} />
+                    </TouchableOpacity>
                 </View>
-            </BlocoInfo>
+                <>
+                    <BlocoInfo titulo={"Visão Geral"} footer={"Suas finanças estão ótimas!"} mTop={20}>
+                        <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 2.000/R$ 10.000,00"}</Text>
 
-            <Text style={[style.titulo, { fontSize: tamanhos.lg, marginBlock: 10}]}>Principais Gastos</Text>
-            <BlocoInfo titulo={"Alimentação"} footer={"Seus gastos estão sob controle!"}>
-                <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 1.000,00/R$ 1.500,00"}</Text>
-
-                <View style={style.container_progresso}>
-                    <View style={{ flex: 1 }}>
-                        <Bar
-                            progress={0.66}
-                            color={cores.primaria}
-                            unfilledColor={cores.cinza_200}
-                            height={10}
-                            width={null}
-                            borderWidth={0}
-                        />
-                    </View>
-                    <Text>66%</Text>
-                </View>
-            </BlocoInfo>
-            <BlocoInfo titulo={"Veículo"} footer={"Seus gastos passaram do planejado!"} mTop={10}>
-                <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 3.400,00/R$ 3.000,00"}</Text>
-
-                <View style={style.container_progresso}>
-                    <View style={{ flex: 1 }}>
-                        <Bar
-                            progress={1}
-                            color={cores.primaria}
-                            unfilledColor={cores.cinza_200}
-                            height={10}
-                            width={null}
-                            borderWidth={0}
-                        />
-                    </View>
-                    <Text>113%</Text>
-                </View>
-            </BlocoInfo>
-            <View style={{ marginBottom: 80}}>
-                <BlocoInfo titulo={"Moradia"} footer={"Seus gastos estão em alerta!"} mTop={10}>
-                    <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 2.500,00/R$ 3.000,00"}</Text>
-
-                    <View style={style.container_progresso}>
-                        <View style={{ flex: 1 }}>
-                            <Bar
-                                progress={0.83}
-                                color={cores.primaria}
-                                unfilledColor={cores.cinza_200}
-                                height={10}
-                                width={null}
-                                borderWidth={0}
-                            />
+                        <View style={style.container_progresso}>
+                            <View style={{ flex: 1 }}>
+                                <Bar
+                                    progress={0.2}
+                                    color={cores.primaria}
+                                    unfilledColor={cores.cinza_200}
+                                    height={10}
+                                    width={null}
+                                    borderWidth={0}
+                                />
+                            </View>
+                            <Text>20%</Text>
                         </View>
-                        <Text>83%</Text>
+                    </BlocoInfo>
+
+                    <Text style={[style.titulo, { fontSize: tamanhos.lg, marginBlock: 10}]}>Principais Gastos</Text>
+                    <BlocoInfo titulo={"Alimentação"} footer={"Seus gastos estão sob controle!"}>
+                        <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 1.000,00/R$ 1.500,00"}</Text>
+
+                        <View style={style.container_progresso}>
+                            <View style={{ flex: 1 }}>
+                                <Bar
+                                    progress={0.66}
+                                    color={cores.primaria}
+                                    unfilledColor={cores.cinza_200}
+                                    height={10}
+                                    width={null}
+                                    borderWidth={0}
+                                />
+                            </View>
+                            <Text>66%</Text>
+                        </View>
+                    </BlocoInfo>
+                    <BlocoInfo titulo={"Veículo"} footer={"Seus gastos passaram do planejado!"} mTop={10}>
+                        <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 3.400,00/R$ 3.000,00"}</Text>
+
+                        <View style={style.container_progresso}>
+                            <View style={{ flex: 1 }}>
+                                <Bar
+                                    progress={1}
+                                    color={cores.primaria}
+                                    unfilledColor={cores.cinza_200}
+                                    height={10}
+                                    width={null}
+                                    borderWidth={0}
+                                />
+                            </View>
+                            <Text>113%</Text>
+                        </View>
+                    </BlocoInfo>
+                    <View style={{ marginBottom: 80}}>
+                        <BlocoInfo titulo={"Moradia"} footer={"Seus gastos estão em alerta!"} mTop={10}>
+                            <Text style={style.texto_visao}>{valoresOcultos ? "R$ -,--/R$ -,--" : "R$ 2.500,00/R$ 3.000,00"}</Text>
+
+                            <View style={style.container_progresso}>
+                                <View style={{ flex: 1 }}>
+                                    <Bar
+                                        progress={0.83}
+                                        color={cores.primaria}
+                                        unfilledColor={cores.cinza_200}
+                                        height={10}
+                                        width={null}
+                                        borderWidth={0}
+                                    />
+                                </View>
+                                <Text>83%</Text>
+                            </View>
+                        </BlocoInfo>
                     </View>
-                </BlocoInfo>
+                </>
             </View>
         </ScrollView>
     )
@@ -166,5 +181,30 @@ const style = StyleSheet.create({
         lineHeight: tamanhos.lg,
         marginTop: 5,
         color: cores.primaria
+    },
+
+    container_mes: { 
+        width: 'auto', 
+        display: 'flex', 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        paddingBlock: 10, 
+        borderBottomWidth: 1, 
+        borderColor: cores.cinza_texto,
+        marginTop: 5,
+
+        seta_lateral: { 
+            flex: 1, 
+            alignItems: 'center'
+        },
+
+        texto: { 
+            flex: 1, 
+            textAlign: 'center', 
+            fontFamily: fontes.bold, 
+            fontSize: tamanhos.md * 1.2, 
+            lineHeight: (tamanhos.md * 1.2)
+        }
     }
 })

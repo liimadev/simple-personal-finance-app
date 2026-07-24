@@ -1,13 +1,14 @@
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { cores, fontes, tamanhos } from "../tema";
 
-export default function BotaoFuncoes({ texto, renderizarIcone, outline, corPrincipal, corSegundaria, onPress }) {
+export default function BotaoFuncoes({ texto, renderizarIcone, outline, corPrincipal, corSegundaria, onPress, largura=1 }) {
     return (
         <TouchableOpacity
             style={[
                 style.container,
                 {
-                    backgroundColor: !outline ? corPrincipal : corSegundaria
+                    backgroundColor: !outline ? corPrincipal : corSegundaria,
+                    width: largura != 1 ? (largura * 100) : 'auto'
                 },
                 {
                     borderWidth: 1.5,
